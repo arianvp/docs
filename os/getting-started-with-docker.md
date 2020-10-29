@@ -89,16 +89,14 @@ While the sections above explained how to run a container when configuring it, f
 Instead, create a systemd unit file to make systemd keep that container running. See the [Getting Started with systemd](getting-started-with-systemd.md) for details.
 
 Alternatively, Docker also has a feature to start existing containers on boot, when the container has the `restart` attribute set to `always`.
-This requires the Docker service to get started on boot instead of using the default socket activation that starts on-demand.
+This requires the Docker service to get started on boot.
 
-Here is a Container Linux Config to enable the Docker service while disabling socket activation:
+Here is a Container Linux Config to enable the Docker service
 
 ```yaml
 systemd:
   units:
-    # Ensure docker starts automatically instead of being socket-activated
-    - name: docker.socket
-      enabled: false
+    # Ensure docker starts automatically
     - name: docker.service
       enabled: true
 ```
