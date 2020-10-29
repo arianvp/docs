@@ -17,8 +17,6 @@ On Flatcar Container Linux, unit files are located at `/etc/systemd/system`. Let
 ```ini
 [Unit]
 Description=MyApp
-After=docker.service
-Requires=docker.service
 
 [Service]
 TimeoutStartSec=0
@@ -33,7 +31,7 @@ WantedBy=multi-user.target
 
 The `Description` shows up in the systemd log and a few other places. Write something that will help you understand exactly what this does later on.
 
-`After=docker.service` and `Requires=docker.service` means this unit will only start after `docker.service` is active. You can define as many of these as you want.
+In Flatcar the `docker.service` service is socket-activated using a corresponding `docker.socket`. This means that `docker.service` will be automatically started when the first docker API call comes in. Hence we do not need to explicitly depend on it in our service definitions which use the Docker API. 
 
 `ExecStart=` allows you to specify any command that you'd like to run when this unit is started. The pid assigned to this process is what systemd will monitor to determine whether the process has crashed or not. Do not run docker containers with `-d` as this will prevent the container from starting as a child of this pid. systemd will think the process has exited and the unit will be stopped.
 
@@ -92,7 +90,6 @@ When the service is told to stop, we need to stop the Docker container using its
 [Unit]
 Description=My Advanced Service
 After=etcd2.service
-After=docker.service
 
 [Service]
 TimeoutStartSec=0
@@ -149,5 +146,6 @@ This gives us the flexibility to use a single unit file to announce multiple cop
 ## More information
 
 <a class="btn btn-default" href="http://www.freedesktop.org/software/systemd/man/systemd.service.html">systemd.service Docs</a>
+<a class="btn btn-default" href="http://www.freedesktop.org/software/systemd/man/systemd.socket.html">systemd.socket Docs</a>
 <a class="btn btn-default" href="http://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd.unit Docs</a>
 <a class="btn btn-default" href="http://www.freedesktop.org/software/systemd/man/systemd.target.html">systemd.target Docs</a>
